@@ -100,7 +100,7 @@ def _load_p_lowering_rule(
   is_signed = mgpu_utils.is_signed(out_aval.dtype)
   match transforms:
     case (gpu_core.UnswizzleRef(swizzle), gpu_core.UntileRef(tiling)):
-      if tiling != (8, swizzle // out_aval.dtype.itemsize):
+      if tiling != (8, swizzle // (jnp.iinfo(out_aval.dtype).bits/8)):
         raise NotImplementedError("Tiling does not fit swizzle")
       return mgpu.FragmentedArray.load_tiled(
           x_ref,
